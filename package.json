@@ -1,7 +1,7 @@
 {
-  "name": "library-name",
+  "name": "splice-google-maps",
   "version": "0.0.1",
-  "description": "A description",
+  "description": "Just a google maps library.",
   "main": "build/index.js",
   "scripts": {
     "start": "node scripts/start.js",
@@ -11,13 +11,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Splice-Ind-Comercio-e-Servico-Ltda/<REPOSITORY>"
+    "url": "git+https://github.com/Splice-Ind-Comercio-e-Servico-Ltda/splice-google-maps"
   },
-  "author": "User name <user@email.com>",
+  "author": "Breno Augusto <breno_asm@hotmail.com>",
   "bugs": {
-    "url": "https://github.com/Splice-Ind-Comercio-e-Servico-Ltda/<REPOSITORY>/issues"
+    "url": "https://github.com/Splice-Ind-Comercio-e-Servico-Ltda/splice-google-maps/issues"
   },
-  "homepage": "https://github.com/Splice-Ind-Comercio-e-Servico-Ltda/<REPOSITORY>.git#readme",
+  "homepage": "https://github.com/Splice-Ind-Comercio-e-Servico-Ltda/splice-google-maps.git#readme",
   "license": "MIT",
   "dependencies": {
     "eslint-config-prettier": "^6.3.0",
