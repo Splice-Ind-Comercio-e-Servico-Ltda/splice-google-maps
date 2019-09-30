@@ -1,8 +1,7 @@
 import React, { createContext, useEffect, useRef, useCallback, useState } from 'react';
+import { useGoogleMaps } from 'splice-react-hooks';
 
 import { isAFunction, containsKey, isANumber } from './utils';
-
-import { useGoogleMaps } from './tempHooks';
 
 export const MapContext = createContext({});
 
