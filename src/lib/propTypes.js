@@ -91,6 +91,17 @@ export const mapTypeStyle = shape({
   styles: arrayOf(Object),
 });
 
+// https://developers.google.com/maps/documentation/javascript/reference/info-window#InfoWindowOptions
+export const infoWindowPropTypes = {
+  content: oneOfType([func, object]).isRequired,
+  disableAutoPan: bool,
+  maxWidth: number,
+  pixelOffset: size,
+  position: oneOfType([latLng, latLngLiteral]),
+  zIndex: number,
+  isOpen: bool,
+};
+
 export const markerPropTypes = {
   anchorPoint: point,
   animationName: animation,
@@ -114,15 +125,4 @@ export const markerPropTypes = {
   onDragStart: func,
   onPositionChanged: func,
   infoWindow: shape(infoWindowPropTypes),
-};
-
-// https://developers.google.com/maps/documentation/javascript/reference/info-window#InfoWindowOptions
-export const infoWindowPropTypes = {
-  content: oneOfType([func, object]).isRequired,
-  disableAutoPan: bool,
-  maxWidth: number,
-  pixelOffset: size,
-  position: oneOfType([latLng, latLngLiteral]),
-  zIndex: number,
-  isOpen: bool,
 };

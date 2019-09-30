@@ -1,36 +1,41 @@
-import React, { createContext, useEffect, useRef, useCallback } from 'react';
+import React, { createContext, useEffect, useRef, useCallback, useState } from 'react';
+
+import { isAFunction, containsKey, isANumber } from './utils';
 
 import { useGoogleMaps } from './tempHooks';
 
 export const MapContext = createContext({});
 
-export default ({ children, markers, boundsRef }) => {
-  const clientId = process.env.REACT_APP_GOOGLE_MAPS_CLIENT_ID;
-  const { googleMapsReady } = useGoogleMaps({ clientId: clientId });
-  const _mapRef = useRef();
+export default ({ children, boundsRef, createBoundsRef, mapRef, clientId, center, zoom }) => {
+  if (boundsRef && isAFunction(createBoundsRef)) {
+    throw new Error('If you provide a boundsRef the parameter createBoundsRef is necessary.');
+  }
+
+  if (isAFunction(createBoundsRef) && !boundsRef) {
+    throw new Error(
+      'If a createBoundsRef function is provided, an initial boundsRef is necessary.'
+    );
+  }
+
+  if (zoom && !isANumber(zoom)) {
+    throw new Error('Zoom must be an integer.');
+  }
+
+  if (center && (!containsKey(center, 'lat') || !containsKey(center, 'lng'))) {
+    throw new Error('Center object must have a lat and lng property.');
+  }
+
+  const _clientId = clientId || process.env.REACT_APP_GOOGLE_MAPS_CLIENT_ID;
+  const { googleMapsReady } = useGoogleMaps({ clientId: _clientId });
+
+  const _mapRef = mapRef || useRef();
   const _boundsRef = boundsRef || useRef();
 
-  useEffect(() => {
-    if (_mapRef.current && googleMapsReady) {
-      const _instance = new window.google.maps.Map(_mapRef.current, {
-        center: { lat: -34.397, lng: 150.644 },
-        zoom: 8,
-      });
+  const [_mapInstance, _setMapInstance] = useState();
 
-      _boundsRef.current = new window.google.maps.LatLngBounds();
-
-      markers.forEach((marker) => {
-        new window.google.maps.Marker({
-          map: _instance,
-          position: marker.position,
-        });
-
-        _boundsRef.current.extend(marker.position);
-      });
-
-      _instance.fitBounds(_boundsRef.current);
-    }
-  }, [googleMapsReady, markers, _boundsRef]);
+  const _createBounds = useCallback(() => {
+    _boundsRef.current = new window.google.maps.LatLngBounds();
+  }, [_boundsRef]);
 
   const extendBounds = useCallback(
     (position) => {
@@ -39,11 +44,31 @@ export default ({ children, markers, boundsRef }) => {
     [_boundsRef]
   );
 
+  const fitBounds = useCallback(() => {
+    _mapInstance.fitBounds(_boundsRef.current);
+
+    _createBounds();
+  }, [_boundsRef, _mapInstance, _createBounds]);
+
   const value = {
     mapRef: _mapRef,
+    mapInstance: _mapInstance,
     extendBounds,
-    markers,
+    fitBounds,
   };
+
+  useEffect(() => {
+    if (_mapRef.current && googleMapsReady) {
+      _setMapInstance(
+        new window.google.maps.Map(_mapRef.current, {
+          center: center || { lat: -18.791918, lng: -407.230804 },
+          zoom: zoom || 12,
+        })
+      );
+
+      _createBounds();
+    }
+  }, [googleMapsReady, _boundsRef, _mapRef, _createBounds, center, zoom]);
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
 };

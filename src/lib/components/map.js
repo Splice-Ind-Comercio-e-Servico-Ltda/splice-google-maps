@@ -3,14 +3,27 @@ import PropTypes from 'prop-types';
 
 import { MapContext } from '../mapContext';
 
-const Map = () => {
+const propTypes = {
+  loadingComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+  mapClassName: PropTypes.string,
+};
+
+const defaultProps = {
+  loadingComponent: null,
+  mapClassName: '',
+};
+
+const Map = ({ loadingComponent: LoadingComponent, mapClassName }) => {
   const { mapRef } = useContext(MapContext);
 
   return (
-    <div style={{ height: '400px', width: '400px' }} ref={mapRef}>
-      carregando...
+    <div className={mapClassName} ref={mapRef}>
+      {LoadingComponent && <LoadingComponent />}
     </div>
   );
 };
+
+Map.propTypes = propTypes;
+Map.defaultProps = defaultProps;
 
 export default Map;

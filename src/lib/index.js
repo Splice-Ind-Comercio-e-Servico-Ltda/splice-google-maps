@@ -1,4 +1,3 @@
-import Map from './components/map';
-import MapInitial from './components/mapInitial';
+import SpliceGoogleMaps from './components/spliceGoogleMaps';
 
-export { MapInitial, Map };
+export default SpliceGoogleMaps;
