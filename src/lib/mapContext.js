@@ -5,7 +5,18 @@ import { isAFunction, containsKey, isANumber } from './utils';
 
 export const MapContext = createContext({});
 
-export default ({ children, boundsRef, createBoundsRef, mapRef, clientId, center, zoom }) => {
+export default ({
+  children,
+  boundsRef,
+  createBoundsRef,
+  mapRef,
+  clientId = process.env.GOOGLE_MAPS_CLIENT_ID,
+  center,
+  zoom = 12,
+  disableDefaultUI = true,
+  fullScreenControl = false,
+  gestureHandling = false,
+}) => {
   if (boundsRef && isAFunction(createBoundsRef)) {
     throw new Error('If you provide a boundsRef the parameter createBoundsRef is necessary.');
   }
@@ -24,7 +35,7 @@ export default ({ children, boundsRef, createBoundsRef, mapRef, clientId, center
     throw new Error('Center object must have a lat and lng property.');
   }
 
-  const _clientId = clientId || process.env.REACT_APP_GOOGLE_MAPS_CLIENT_ID;
+  const _clientId = clientId;
   const { googleMapsReady } = useGoogleMaps({ clientId: _clientId });
 
   const _mapRef = mapRef || useRef();
@@ -56,18 +67,27 @@ export default ({ children, boundsRef, createBoundsRef, mapRef, clientId, center
     fitBounds,
   };
 
-  useEffect(() => {
-    if (_mapRef.current && googleMapsReady) {
+  const _mapSetup = useCallback(
+    () =>
       _setMapInstance(
         new window.google.maps.Map(_mapRef.current, {
           center: center || { lat: -18.791918, lng: -407.230804 },
-          zoom: zoom || 12,
+          zoom: zoom,
+          disableDefaultUI,
+          fullScreenControl,
+          gestureHandling,
         })
-      );
+      ),
+    [center, zoom, _mapRef, disableDefaultUI, fullScreenControl, gestureHandling]
+  );
+
+  useEffect(() => {
+    if (_mapRef.current && googleMapsReady) {
+      _mapSetup();
 
       _createBounds();
     }
-  }, [googleMapsReady, _boundsRef, _mapRef, _createBounds, center, zoom]);
+  }, [googleMapsReady, _boundsRef, _mapRef, _createBounds, _mapSetup]);
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
 };

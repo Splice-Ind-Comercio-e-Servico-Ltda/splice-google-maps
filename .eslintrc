@@ -20,7 +20,6 @@
         "SwitchCase": 1
       }
     ],
-    "linebreak-style": 0,
-    "react-hooks/exhaustive-deps": 0
+    "linebreak-style": 0
   }
 }
