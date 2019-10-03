@@ -9,7 +9,6 @@ import TestComponent from './testComponent';
 const App = () => {
   const [selectedMarkers, setSelectedMarkers] = useState([]);
   const [mapInstance, setMapInstance] = useState(null);
-  const [boundsInstance, setBoundsInstance] = useState(null);
 
   const onMarkerClick = useCallback((event, { openInfoWindow, infoWindow }) => {
     openInfoWindow();
@@ -18,11 +17,6 @@ const App = () => {
   const onMapInstance = useCallback((mapInstance) => {
     setMapInstance(mapInstance);
     console.log('INSTANCE===', mapInstance);
-  }, []);
-
-  const onBoundsInstance = useCallback((boundsInstance) => {
-    setBoundsInstance(boundsInstance);
-    console.log('BOUNDS===', boundsInstance);
   }, []);
 
   const markers = [
@@ -91,7 +85,6 @@ const App = () => {
       </button>
       <SpliceGoogleMaps
         onMapInstanceCreated={onMapInstance}
-        onBoundsInstanceCreated={onBoundsInstance}
         markerProps={{
           markers: selectedMarkers,
         }}
