@@ -1,7 +1,5 @@
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-
-import { MapContext } from '../mapContext';
 
 import { setupGoogleMapsEventListeners } from '../utils';
 
@@ -27,9 +25,9 @@ const Map = ({
   onRightClick,
   onCenterChanged,
   onBoundsChanged,
+  mapRef,
+  mapInstance,
 }) => {
-  const { mapRef, mapInstance } = useContext(MapContext);
-
   const _events = useMemo(
     () => [
       {

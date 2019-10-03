@@ -1,8 +1,6 @@
-import React, { useContext, useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { render } from 'react-dom';
 import PropTypes from 'prop-types';
-
-import { MapContext } from '../mapContext';
 
 import { markerPropTypes } from '../propTypes';
 
@@ -16,9 +14,7 @@ const defaultProps = {
   markers: [],
 };
 
-const Markers = ({ markers }) => {
-  const { extendBounds, fitBounds, mapInstance } = useContext(MapContext);
-
+const Markers = ({ markers, extendBounds, fitBounds, mapInstance }) => {
   const [_markers, _setMarkers] = useState([]);
 
   const _canCreateInfoWindow = useCallback(
@@ -127,7 +123,7 @@ const Markers = ({ markers }) => {
                 if (isAFunction(onClick)) {
                   onClick(event, { infoWindow, openInfoWindow });
                 } else {
-                  instancedMarker.addListener('click', openInfoWindow);
+                  openInfoWindow();
                 }
               },
             },
