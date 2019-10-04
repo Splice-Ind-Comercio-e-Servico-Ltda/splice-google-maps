@@ -6,6 +6,17 @@ import { setupGoogleMapsEventListeners } from '../utils';
 const propTypes = {
   loadingComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
   mapClassName: PropTypes.string,
+  onClick: PropTypes.func,
+  onClickOnce: PropTypes.func,
+  onDoubleClick: PropTypes.func,
+  onDrag: PropTypes.func,
+  onDragEnd: PropTypes.func,
+  onDragStart: PropTypes.func,
+  onRightClick: PropTypes.func,
+  onCenterChanged: PropTypes.func,
+  onBoundsChanged: PropTypes.func,
+  mapRef: PropTypes.object.isRequired,
+  mapInstance: PropTypes.object,
 };
 
 const defaultProps = {
@@ -28,6 +39,8 @@ const Map = ({
   mapRef,
   mapInstance,
 }) => {
+  const _mapInstance = useMemo(() => mapInstance, [mapInstance]);
+
   const _events = useMemo(
     () => [
       {
@@ -58,16 +71,16 @@ const Map = ({
 
   // Events clean up and setup
   useEffect(() => {
-    if (mapInstance) {
-      setupGoogleMapsEventListeners(mapInstance, _events);
+    if (_mapInstance) {
+      setupGoogleMapsEventListeners(_mapInstance, _events);
     }
 
     return () => {
-      if (mapInstance) {
-        window.google.maps.event.clearInstanceListeners(mapInstance);
+      if (_mapInstance) {
+        window.google.maps.event.clearInstanceListeners(_mapInstance);
       }
     };
-  }, [mapInstance, _events]);
+  }, [_mapInstance, _events]);
 
   return (
     <div className={mapClassName} ref={mapRef}>

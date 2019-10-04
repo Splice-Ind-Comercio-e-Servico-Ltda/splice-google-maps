@@ -20,7 +20,7 @@
   "homepage": "https://github.com/Splice-Ind-Comercio-e-Servico-Ltda/splice-google-maps.git#readme",
   "license": "MIT",
   "dependencies": {
-    "splice-react-hooks": "0.0.1"
+    "splice-react-hooks": "0.0.3"
   },
   "peerDependencies": {
     "splice-react-hooks": "0.0.1"

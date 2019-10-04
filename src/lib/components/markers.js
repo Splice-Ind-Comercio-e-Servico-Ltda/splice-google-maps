@@ -8,13 +8,17 @@ import { hasContent, setupGoogleMapsEventListeners, isAFunction } from '../utils
 
 const propTypes = {
   markers: PropTypes.arrayOf(PropTypes.shape(markerPropTypes)),
+  mapInstance: PropTypes.object,
+  extendBounds: PropTypes.func,
+  fitBounds: PropTypes.func,
 };
 
 const defaultProps = {
   markers: [],
+  shouldFitBounds: true,
 };
 
-const Markers = ({ markers, mapInstance, shouldFitBounds = true }) => {
+const Markers = ({ markers, mapInstance, shouldFitBounds, extendBounds, fitBounds }) => {
   const [_markers, _setMarkers] = useState([]);
 
   const _mapInstance = useMemo(() => mapInstance, [mapInstance]);
@@ -154,31 +158,16 @@ const Markers = ({ markers, mapInstance, shouldFitBounds = true }) => {
     }
   }, [_mapInstance, markers, _initMarkers]); // eslint-disable-line
 
-  const _createBounds = useCallback(() => new window.google.maps.LatLngBounds(), []);
-
-  const _extendBounds = useCallback((position, boundsLatLng) => {
-    boundsLatLng.extend(position);
-  }, []);
-
-  const _fitBounds = useCallback(
-    (boundsLatLng) => {
-      _mapInstance.fitBounds(boundsLatLng);
-    },
-    [_mapInstance]
-  );
-
   // Bounds effect
   useEffect(() => {
     if (hasContent(_markers) && _shouldFitBounds) {
-      const boundsLatLng = _createBounds();
-
       _markers.forEach((marker) => {
-        _extendBounds(marker.position, boundsLatLng);
+        extendBounds(marker.position);
       });
 
-      _fitBounds(boundsLatLng);
+      fitBounds(mapInstance);
     }
-  }, [_extendBounds, _fitBounds, _markers, _createBounds, _shouldFitBounds]);
+  }, [extendBounds, fitBounds, _markers, _shouldFitBounds, mapInstance]);
 
   // Events clean up
   useEffect(() => {

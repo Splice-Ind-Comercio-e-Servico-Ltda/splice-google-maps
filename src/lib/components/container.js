@@ -1,14 +1,17 @@
 import React, { useEffect, useRef, useCallback, useState, useMemo } from 'react';
-import { useGoogleMaps } from 'splice-react-hooks';
+
+import { useGoogleMapsScript, useGoogleMapsActions } from 'splice-react-hooks';
 
 import { containsKey, isANumber } from '../utils';
 
 import Map from './map';
 import Markers from './markers';
+import Polylines from './polylines';
 
 const Container = ({
   mapProps = {},
   markerProps = {},
+  polylineProps = {},
   clientId = process.env.GOOGLE_MAPS_CLIENT_ID,
   zoom = 12,
   center,
@@ -24,6 +27,11 @@ const Container = ({
   const _fullScreenControl = useMemo(() => fullScreenControl, [fullScreenControl]);
   const _gestureHandling = useMemo(() => gestureHandling, [gestureHandling]);
   const _onMapInstanceCreated = useMemo(() => onMapInstanceCreated, [onMapInstanceCreated]);
+  const _markers = useMemo(() => markerProps.markers, [markerProps.markers]);
+  const _polylines = useMemo(() => polylineProps.polylines, [polylineProps.polylines]);
+
+  const googleMapsReady = useGoogleMapsScript(_clientId);
+  const { extendBounds, fitBounds, createBounds } = useGoogleMapsActions();
 
   const _mapRef = useRef();
 
@@ -36,8 +44,6 @@ const Container = ({
   if (center && (!containsKey(center, 'lat') || !containsKey(center, 'lng'))) {
     throw new Error('Center object must have a lat and lng property.');
   }
-
-  const { googleMapsReady } = useGoogleMaps({ clientId: _clientId });
 
   const _mapSetup = useCallback(
     () =>
@@ -54,6 +60,12 @@ const Container = ({
   );
 
   useEffect(() => {
+    if (_mapInstance) {
+      createBounds();
+    }
+  }, [_polylines, _markers, createBounds, _mapInstance]);
+
+  useEffect(() => {
     if (_mapRef.current && googleMapsReady) {
       _mapSetup();
     }
@@ -68,8 +80,25 @@ const Container = ({
 
   return (
     <React.Fragment>
-      <Map {...mapProps} mapRef={_mapRef} mapInstance={_mapInstance} />
-      <Markers {...markerProps} mapInstance={_mapInstance} />
+      <Map
+        {...mapProps}
+        mapRef={_mapRef}
+        mapInstance={_mapInstance}
+        extendBounds={extendBounds}
+        fitBounds={fitBounds}
+      />
+      <Markers
+        {...markerProps}
+        mapInstance={_mapInstance}
+        extendBounds={extendBounds}
+        fitBounds={fitBounds}
+      />
+      <Polylines
+        {...polylineProps}
+        mapInstance={_mapInstance}
+        extendBounds={extendBounds}
+        fitBounds={fitBounds}
+      />
     </React.Fragment>
   );
 };
