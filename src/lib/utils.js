@@ -23,3 +23,9 @@ export const setupGoogleMapsEventListeners = (instance, events) =>
 
     return null;
   });
+
+export const checkForGoogleMaps = () => {
+  if (!window.google) {
+    throw new Error('This method uses Google maps API and it is not loaded.');
+  }
+};

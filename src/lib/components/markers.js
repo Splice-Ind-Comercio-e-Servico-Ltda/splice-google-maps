@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { render } from 'react-dom';
 import PropTypes from 'prop-types';
 
@@ -8,14 +8,21 @@ import { hasContent, setupGoogleMapsEventListeners, isAFunction } from '../utils
 
 const propTypes = {
   markers: PropTypes.arrayOf(PropTypes.shape(markerPropTypes)),
+  mapInstance: PropTypes.object,
+  extendBounds: PropTypes.func,
+  fitBounds: PropTypes.func,
 };
 
 const defaultProps = {
   markers: [],
+  shouldFitBounds: true,
 };
 
-const Markers = ({ markers, extendBounds, fitBounds, mapInstance }) => {
+const Markers = ({ markers, mapInstance, shouldFitBounds, extendBounds, fitBounds }) => {
   const [_markers, _setMarkers] = useState([]);
+
+  const _mapInstance = useMemo(() => mapInstance, [mapInstance]);
+  const _shouldFitBounds = useMemo(() => shouldFitBounds, [shouldFitBounds]);
 
   const _canCreateInfoWindow = useCallback(
     (windowId) => document.getElementById(windowId) === null,
@@ -86,11 +93,11 @@ const Markers = ({ markers, extendBounds, fitBounds, mapInstance }) => {
         if (_canCreateInfoWindow(windowId)) {
           const instancedInfoWindow = _createInfoWindow(infoWindow, windowId);
 
-          instancedInfoWindow.open(mapInstance, instancedMarker);
+          instancedInfoWindow.open(_mapInstance, instancedMarker);
         }
       }
     },
-    [_createInfoWindow, _getInfoWindowId, _canCreateInfoWindow, mapInstance]
+    [_createInfoWindow, _getInfoWindowId, _canCreateInfoWindow, _mapInstance]
   );
 
   const _initMarkers = useCallback(() => {
@@ -110,7 +117,7 @@ const Markers = ({ markers, extendBounds, fitBounds, mapInstance }) => {
           index
         ) => {
           const instancedMarker = new window.google.maps.Marker({
-            map: mapInstance,
+            map: _mapInstance,
             position: position,
           });
 
@@ -140,27 +147,27 @@ const Markers = ({ markers, extendBounds, fitBounds, mapInstance }) => {
         }
       )
     );
-  }, [mapInstance, markers, _openInfoWindow]);
+  }, [_mapInstance, markers, _openInfoWindow]);
 
   // Clean up effect and call the init
   useEffect(() => {
-    if (mapInstance) {
+    if (_mapInstance) {
       _clearMarkers();
 
       _initMarkers();
     }
-  }, [mapInstance, markers, _initMarkers]); // eslint-disable-line
+  }, [_mapInstance, markers, _initMarkers]); // eslint-disable-line
 
   // Bounds effect
   useEffect(() => {
-    if (hasContent(_markers)) {
+    if (hasContent(_markers) && _shouldFitBounds) {
       _markers.forEach((marker) => {
         extendBounds(marker.position);
       });
 
-      fitBounds();
+      fitBounds(mapInstance);
     }
-  }, [extendBounds, fitBounds, _markers]);
+  }, [extendBounds, fitBounds, _markers, _shouldFitBounds, mapInstance]);
 
   // Events clean up
   useEffect(() => {

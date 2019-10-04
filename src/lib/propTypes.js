@@ -126,3 +126,29 @@ export const markerPropTypes = {
   onPositionChanged: func,
   infoWindow: shape(infoWindowPropTypes),
 };
+
+export const iconSequence = {
+  fixedRotation: bool,
+  icon: symbol,
+  offset: string,
+  repeat: string,
+};
+
+export const polylinePropTypes = {
+  icons: arrayOf(iconSequence),
+  isClickable: bool,
+  isDraggable: bool,
+  isEditable: bool,
+  isGeodesic: bool,
+  isVisible: bool,
+  map: object,
+  onClick: func,
+  onDoubleClick: func,
+  onDrag: func,
+  onDragEnd: func,
+  onDragStart: func,
+  path: arrayOf(oneOfType([latLng, latLngLiteral])),
+  strokeColor: string,
+  strokeOpacity: number,
+  strokeWeight: number,
+};
