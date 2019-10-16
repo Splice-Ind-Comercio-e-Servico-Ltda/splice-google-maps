@@ -19,12 +19,14 @@ const Container = ({
   fullScreenControl = false,
   gestureHandling = false,
   onMapInstanceCreated,
+  styles,
 }) => {
   const _clientId = useMemo(() => clientId, [clientId]);
   const _center = useMemo(() => center, [center]);
   const _zoom = useMemo(() => zoom, [zoom]);
   const _disableDefaultUI = useMemo(() => disableDefaultUI, [disableDefaultUI]);
   const _fullScreenControl = useMemo(() => fullScreenControl, [fullScreenControl]);
+  const _styles = useMemo(() => styles, [styles]);
   const _gestureHandling = useMemo(() => gestureHandling, [gestureHandling]);
   const _onMapInstanceCreated = useMemo(() => onMapInstanceCreated, [onMapInstanceCreated]);
   const _markers = useMemo(() => markerProps.markers, [markerProps.markers]);
@@ -54,9 +56,10 @@ const Container = ({
           disableDefaultUI: _disableDefaultUI,
           fullScreenControl: _fullScreenControl,
           gestureHandling: _gestureHandling,
+          styles: _styles,
         })
       ),
-    [_center, _zoom, _mapRef, _disableDefaultUI, _fullScreenControl, _gestureHandling]
+    [_center, _zoom, _disableDefaultUI, _fullScreenControl, _gestureHandling, _styles]
   );
 
   useEffect(() => {
