@@ -113,12 +113,14 @@ const Markers = ({ markers, mapInstance, shouldFitBounds, extendBounds, fitBound
             onDragEnd,
             onPositionChanged,
             position,
+            icon,
           },
           index
         ) => {
           const instancedMarker = new window.google.maps.Marker({
             map: _mapInstance,
             position: position,
+            icon,
           });
 
           const events = [
