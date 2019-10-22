@@ -5,7 +5,7 @@ import { setupGoogleMapsEventListeners } from '../utils';
 
 const propTypes = {
   loadingComponent: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
-  mapClassName: PropTypes.string,
+  className: PropTypes.string,
   onClick: PropTypes.func,
   onClickOnce: PropTypes.func,
   onDoubleClick: PropTypes.func,
@@ -21,12 +21,12 @@ const propTypes = {
 
 const defaultProps = {
   loadingComponent: null,
-  mapClassName: '',
+  className: '',
 };
 
 const Map = ({
   loadingComponent: LoadingComponent,
-  mapClassName,
+  className,
   onClick,
   onClickOnce,
   onDoubleClick,
@@ -83,7 +83,7 @@ const Map = ({
   }, [_mapInstance, _events]);
 
   return (
-    <div className={mapClassName} ref={mapRef}>
+    <div className={className} ref={mapRef}>
       {LoadingComponent && <LoadingComponent />}
     </div>
   );

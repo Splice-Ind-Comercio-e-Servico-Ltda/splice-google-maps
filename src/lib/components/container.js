@@ -20,6 +20,7 @@ const Container = ({
   gestureHandling = false,
   onMapInstanceCreated,
   styles,
+  className,
 }) => {
   const _clientId = useMemo(() => clientId, [clientId]);
   const _center = useMemo(() => center, [center]);
@@ -31,6 +32,13 @@ const Container = ({
   const _onMapInstanceCreated = useMemo(() => onMapInstanceCreated, [onMapInstanceCreated]);
   const _markers = useMemo(() => markerProps.markers, [markerProps.markers]);
   const _polylines = useMemo(() => polylineProps.polylines, [polylineProps.polylines]);
+  const _mapProps = useMemo(
+    () => ({
+      ...mapProps,
+      className,
+    }),
+    [mapProps, className]
+  );
 
   const googleMapsReady = useGoogleMapsScript(_clientId);
   const { extendBounds, fitBounds, createBounds } = useGoogleMapsActions();
@@ -84,7 +92,7 @@ const Container = ({
   return (
     <React.Fragment>
       <Map
-        {...mapProps}
+        {..._mapProps}
         mapRef={_mapRef}
         mapInstance={_mapInstance}
         extendBounds={extendBounds}
