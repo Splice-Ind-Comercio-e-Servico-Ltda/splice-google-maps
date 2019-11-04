@@ -1,6 +1,6 @@
 {
   "name": "splice-google-maps",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Just a google maps library.",
   "main": "build/index.js",
   "scripts": {
