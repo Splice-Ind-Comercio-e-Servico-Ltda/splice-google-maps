@@ -20,9 +20,19 @@ const defaultProps = {
 
 const Markers = ({ markers, mapInstance, shouldFitBounds, extendBounds, fitBounds }) => {
   const [_markers, _setMarkers] = useState([]);
-
   const _mapInstance = useMemo(() => mapInstance, [mapInstance]);
   const _shouldFitBounds = useMemo(() => shouldFitBounds, [shouldFitBounds]);
+
+  useEffect(() => {
+    Promise.all([
+      new Promise(() => {
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js';
+        script.async = true;
+        document.body.appendChild(script);
+      }),
+    ]);
+  }, []);
 
   const _canCreateInfoWindow = useCallback(
     (windowId) => document.getElementById(windowId) === null,
@@ -101,54 +111,59 @@ const Markers = ({ markers, mapInstance, shouldFitBounds, extendBounds, fitBound
   );
 
   const _initMarkers = useCallback(() => {
-    _setMarkers(
-      markers.map(
-        (
+    const _markersToCluster = markers.map(
+      (
+        {
+          infoWindow,
+          onClick,
+          onDoubleClick,
+          onDragStart,
+          onDrag,
+          onDragEnd,
+          onPositionChanged,
+          position,
+          icon,
+        },
+        index
+      ) => {
+        const instancedMarker = new window.google.maps.Marker({
+          map: _mapInstance,
+          position: position,
+          icon,
+        });
+
+        const events = [
           {
-            infoWindow,
-            onClick,
-            onDoubleClick,
-            onDragStart,
-            onDrag,
-            onDragEnd,
-            onPositionChanged,
-            position,
-            icon,
-          },
-          index
-        ) => {
-          const instancedMarker = new window.google.maps.Marker({
-            map: _mapInstance,
-            position: position,
-            icon,
-          });
+            name: 'click',
+            callback: (event) => {
+              const openInfoWindow = () => _openInfoWindow(index, instancedMarker, infoWindow);
 
-          const events = [
-            {
-              name: 'click',
-              callback: (event) => {
-                const openInfoWindow = () => _openInfoWindow(index, instancedMarker, infoWindow);
-
-                if (isAFunction(onClick)) {
-                  onClick(event, { infoWindow, openInfoWindow });
-                } else {
-                  openInfoWindow();
-                }
-              },
+              if (isAFunction(onClick)) {
+                onClick(event, { infoWindow, openInfoWindow });
+              } else {
+                openInfoWindow();
+              }
             },
-            { name: 'dblclick', callback: onDoubleClick },
-            { name: 'drag', callback: onDrag },
-            { name: 'dragend', callback: onDragEnd },
-            { name: 'dragstart', callback: onDragStart },
-            { name: 'position_changed', callback: onPositionChanged },
-          ];
+          },
+          { name: 'dblclick', callback: onDoubleClick },
+          { name: 'drag', callback: onDrag },
+          { name: 'dragend', callback: onDragEnd },
+          { name: 'dragstart', callback: onDragStart },
+          { name: 'position_changed', callback: onPositionChanged },
+        ];
 
-          setupGoogleMapsEventListeners(instancedMarker, events);
+        setupGoogleMapsEventListeners(instancedMarker, events);
 
-          return instancedMarker;
-        }
-      )
+        return instancedMarker;
+      }
     );
+    _setMarkers(_markersToCluster);
+
+    if (markers.length > 0) {
+      new window.MarkerClusterer(_mapInstance, _markersToCluster, {
+        imagePath: 'https://mob2bcontent.blob.core.windows.net/sits/icones/m',
+      });
+    }
   }, [_mapInstance, markers, _openInfoWindow]);
 
   // Clean up effect and call the init
