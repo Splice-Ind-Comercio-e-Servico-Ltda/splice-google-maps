@@ -18,7 +18,7 @@ const defaultProps = {
   shouldFitBounds: true,
 };
 
-const Markers = ({ markers, mapInstance, shouldFitBounds, extendBounds, fitBounds }) => {
+const Markers = ({ markers, mapInstance, shouldFitBounds, extendBounds, fitBounds, latLong }) => {
   const [_markers, _setMarkers] = useState([]);
   const _mapInstance = useMemo(() => mapInstance, [mapInstance]);
   const _shouldFitBounds = useMemo(() => shouldFitBounds, [shouldFitBounds]);
@@ -183,14 +183,16 @@ const Markers = ({ markers, mapInstance, shouldFitBounds, extendBounds, fitBound
 
   // Bounds effect
   useEffect(() => {
-    if (hasContent(_markers) && _shouldFitBounds) {
-      _markers.forEach((marker) => {
-        extendBounds(marker.position);
-      });
+    if (latLong == null) {
+      if (hasContent(_markers) && _shouldFitBounds) {
+        _markers.forEach((marker) => {
+          extendBounds(marker.position);
+        });
 
-      fitBounds(mapInstance);
+        fitBounds(mapInstance);
+      }
     }
-  }, [extendBounds, fitBounds, _markers, _shouldFitBounds, mapInstance]);
+  }, [extendBounds, fitBounds, latLong, _markers, _shouldFitBounds, mapInstance]);
 
   // Events clean up
   useEffect(() => {
