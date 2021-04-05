@@ -55,20 +55,18 @@ const Container = ({
     throw new Error('Center object must have a lat and lng property.');
   }
 
-  const _mapSetup = useCallback(
-    () =>
-      _setMapInstance(
-        new window.google.maps.Map(_mapRef.current, {
-          center: _center || { lat: -18.791918, lng: -407.230804 },
-          zoom: _zoom,
-          disableDefaultUI: _disableDefaultUI,
-          fullScreenControl: _fullScreenControl,
-          gestureHandling: _gestureHandling,
-          styles: _styles,
-        })
-      ),
-    [_center, _zoom, _disableDefaultUI, _fullScreenControl, _gestureHandling, _styles]
-  );
+  const _mapSetup = useCallback(() => {
+    return _setMapInstance(
+      new window.google.maps.Map(_mapRef.current, {
+        center: _center || { lat: -18.791918, lng: -407.230804 },
+        zoom: _zoom,
+        disableDefaultUI: _disableDefaultUI,
+        fullScreenControl: _fullScreenControl,
+        gestureHandling: _gestureHandling,
+        styles: _styles,
+      })
+    );
+  }, [_center, _zoom, _disableDefaultUI, _fullScreenControl, _gestureHandling, _styles]);
 
   useEffect(() => {
     if (_mapInstance) {
@@ -103,12 +101,14 @@ const Container = ({
         mapInstance={_mapInstance}
         extendBounds={extendBounds}
         fitBounds={fitBounds}
+        latLong={_center}
       />
       <Polylines
         {...polylineProps}
         mapInstance={_mapInstance}
         extendBounds={extendBounds}
         fitBounds={fitBounds}
+        latLong={_center}
       />
     </React.Fragment>
   );

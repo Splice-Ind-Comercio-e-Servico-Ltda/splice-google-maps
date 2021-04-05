@@ -18,7 +18,14 @@ const defaultProps = {
   shouldFitBounds: true,
 };
 
-const Polylines = ({ mapInstance, extendBounds, fitBounds, polylines, shouldFitBounds }) => {
+const Polylines = ({
+  mapInstance,
+  extendBounds,
+  fitBounds,
+  polylines,
+  shouldFitBounds,
+  latLong,
+}) => {
   const [_polylines, _setPolylines] = useState([]);
 
   const _mapInstance = useMemo(() => mapInstance, [mapInstance]);
@@ -106,20 +113,22 @@ const Polylines = ({ mapInstance, extendBounds, fitBounds, polylines, shouldFitB
 
   // Bounds effect
   useEffect(() => {
-    if (hasContent(_polylines) && _shouldFitBounds) {
-      _polylines.forEach((polyline) => {
-        const path = polyline.getPath();
+    if (latLong == null) {
+      if (hasContent(_polylines) && _shouldFitBounds) {
+        _polylines.forEach((polyline) => {
+          const path = polyline.getPath();
 
-        if (hasContent(path)) {
-          path.forEach((latLng) => {
-            extendBounds(latLng);
-          });
-        }
-      });
+          if (hasContent(path)) {
+            path.forEach((latLng) => {
+              extendBounds(latLng);
+            });
+          }
+        });
 
-      fitBounds(_mapInstance);
+        fitBounds(_mapInstance);
+      }
     }
-  }, [extendBounds, fitBounds, _polylines, _shouldFitBounds, _mapInstance]);
+  }, [extendBounds, fitBounds, latLong, _polylines, _shouldFitBounds, _mapInstance]);
 
   return null;
 };
