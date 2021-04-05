@@ -22,6 +22,7 @@ const Markers = ({ markers, mapInstance, shouldFitBounds, extendBounds, fitBound
   const [_markers, _setMarkers] = useState([]);
   const _mapInstance = useMemo(() => mapInstance, [mapInstance]);
   const _shouldFitBounds = useMemo(() => shouldFitBounds, [shouldFitBounds]);
+  const [markerClustererState, setMarkerClustererState] = useState(null);
 
   useEffect(() => {
     Promise.all([
@@ -160,9 +161,14 @@ const Markers = ({ markers, mapInstance, shouldFitBounds, extendBounds, fitBound
     _setMarkers(_markersToCluster);
 
     if (markers.length > 0) {
-      new window.MarkerClusterer(_mapInstance, _markersToCluster, {
+      if (markerClustererState != null) markerClustererState.clearMarkers();
+
+      var markerClusterer;
+      markerClusterer = new window.MarkerClusterer(_mapInstance, _markersToCluster, {
         imagePath: 'https://mob2bcontent.blob.core.windows.net/sits/icones/m',
       });
+
+      setMarkerClustererState(markerClusterer);
     }
   }, [_mapInstance, markers, _openInfoWindow]);
 
