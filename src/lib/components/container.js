@@ -12,7 +12,7 @@ const Container = ({
   mapProps = {},
   markerProps = {},
   polylineProps = {},
-  clientId = process.env.GOOGLE_MAPS_CLIENT_ID,
+  googleMapsKey = process.env.GOOGLE_MAPS_KEY,
   zoom = 12,
   center,
   disableDefaultUI = true,
@@ -22,7 +22,7 @@ const Container = ({
   styles,
   className,
 }) => {
-  const _clientId = useMemo(() => clientId, [clientId]);
+  const _key = useMemo(() => googleMapsKey, [googleMapsKey]);
   const _center = useMemo(() => center, [center]);
   const _zoom = useMemo(() => zoom, [zoom]);
   const _disableDefaultUI = useMemo(() => disableDefaultUI, [disableDefaultUI]);
@@ -40,7 +40,7 @@ const Container = ({
     [mapProps, className]
   );
 
-  const googleMapsReady = useGoogleMapsScript(_clientId);
+  const googleMapsReady = useGoogleMapsScript(_key);
   const { extendBounds, fitBounds, createBounds } = useGoogleMapsActions();
 
   const _mapRef = useRef();
