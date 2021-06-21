@@ -58,6 +58,7 @@ const Container = ({
   const _mapSetup = useCallback(() => {
     return _setMapInstance(
       new window.google.maps.Map(_mapRef.current, {
+        mapId: 'd51b93daca9b45e',
         center: _center || { lat: -18.791918, lng: -407.230804 },
         zoom: _zoom,
         disableDefaultUI: _disableDefaultUI,
